@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
@@ -12,6 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.19.0",
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.2.3",
     "nodemon": "^3.1.0"
   }
 }
