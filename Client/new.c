@@ -19,7 +19,7 @@ int signup();
 int reset();
 int login_connection(char[], char[]);
 int signup_connection(char[], char[]);
-int expense_choice();
+int home();
 
 //main function
 
@@ -141,7 +141,6 @@ int login_connection(char username[50],char password[50]){
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response.status_code);
 
         // Print the received message and status code
-         printf("ID: %s\n", response.id);
         if(response.status_code==200){
             printf("\033[H\033[J"); 
             printf(ANSI_ORANGE"Signup Successfull" ANSI_RESET);
@@ -149,10 +148,28 @@ int login_connection(char username[50],char password[50]){
             printf("\033[H\033[J"); 
             printf("Welcome to Expenz , ");
             printf(ANSI_GREEN"\033[1m%s\033[1m"ANSI_RESET,username);
-             printf("\n ID: %s\n", response.id);
+           
         }
         else if(response.status_code==206){
-            printf(ANSI_RED "Invalid Credentials"ANSI_RESET);
+            int ch;
+            printf("\033[H\033[J"); 
+            printf(ANSI_RED "\nInvalid Credentials\n\n"ANSI_RESET);
+            printf(ANSI_GREEN"1. Login \n"ANSI_RESET);
+            printf(ANSI_ORANGE"2.Go Back\n "ANSI_RESET);
+            printf("Select Your choice........ ");
+            scanf("%d",&ch);
+            switch(ch){
+                case 1:
+                login();
+                break;
+                case 2:
+                Screen();
+                break;
+                default:
+                exit(0);
+                break;
+            }
+            
         }
         else{
             login();
@@ -254,4 +271,10 @@ int signup_connection(char username[50],char password[50]){
     curl_easy_cleanup(curl);
 
     return 0;
+}
+int home(){
+    int ch=0;
+    printf("1. VIEW EXPENSES");
+    printf("2. ADD NEW EXPENSE");
+    printf("3. EXIT");
 }
