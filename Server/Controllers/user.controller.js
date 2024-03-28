@@ -34,10 +34,10 @@ const CheckUsers=async(req,res)=>{
   const {username,password}=req.body;
   isUser=await User.findOne({username:username ,password:password})
   if(isUser){
-    return res.status(200).json({messgae : "Credentials matched"})
+    return res.status(200).json({id:isUser._id,message:"Login Success"})
   }
   else{
-    return res.status(206).json({messgae:"Invalid credentials"})
+    return res.status(206).json({message:"Invalid credentials"})
   }
 }
 module.exports = {
