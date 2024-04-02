@@ -143,11 +143,12 @@ int login_connection(char username[50],char password[50]){
         // Print the received message and status code
         if(response.status_code==200){
             printf("\033[H\033[J"); 
-            printf(ANSI_ORANGE"Signup Successfull" ANSI_RESET);
+            printf(ANSI_ORANGE"Login Successfull\033[1m " ANSI_RESET);
             sleep(2);
             printf("\033[H\033[J"); 
-            printf("Welcome to Expenz , ");
-            printf(ANSI_GREEN"\033[1m%s\033[1m"ANSI_RESET,username);
+            printf("\033[1m Welcome to Expenz , ");
+            printf(ANSI_GREEN"\033[1m%s\033[1m \n\n"ANSI_RESET,username);
+            home();
            
         }
         else if(response.status_code==206){
@@ -273,8 +274,12 @@ int signup_connection(char username[50],char password[50]){
     return 0;
 }
 int home(){
-    int ch=0;
-    printf("1. VIEW EXPENSES");
-    printf("2. ADD NEW EXPENSE");
-    printf("3. EXIT");
-}
+    int ch;
+    printf(ANSI_GREEN"1. View Expense \n");
+    printf("2. Add Expense \n");
+    printf("3. Update Expense \n");
+    printf("4. Delete Expense \n"ANSI_RESET);
+    printf(ANSI_RED"5. Exit \n"ANSI_RESET);
+
+    return 0;
+    }
