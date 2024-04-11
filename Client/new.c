@@ -235,8 +235,9 @@ int signup_connection(char username[50],char password[50]){
             printf(ANSI_ORANGE"Signup Successfull" ANSI_RESET);
             sleep(2);
             printf("\033[H\033[J"); 
-            printf("Welcome to Expenz , \n");
+            printf("Welcome to Expenz ,");
             printf(ANSI_GREEN"\033[1m%s\033[1m"ANSI_RESET,username);
+            home();
         }
         else if(response.status_code==206){
             int ch;

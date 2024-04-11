@@ -1,7 +1,7 @@
 const mongoose=require('mongoose')
 const ExpenseSchema=new mongoose.Schema({
     id:{
-        type: Number,
+        type: String,
     },
     desc:{
         type: String,

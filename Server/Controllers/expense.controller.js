@@ -18,11 +18,11 @@ const postExpense=async(req,res)=>{
 const showExpense=async(req,res)=>{
     try{
         const id=req.params.id
-        const expense=await Expense.find({id:req.params.id})
-        if (!expense) {
+        const data=await Expense.find({id:req.params.id})
+        if (!data) {
             return res.status(404).json({ message: 'Expense not found' });
         }
-        return res.json(expense); 
+        return res.json(data); 
     }
     catch(e){
         return res.json(e)
@@ -31,7 +31,7 @@ const showExpense=async(req,res)=>{
 const delExpense=async(req,res)=>{
     try{
         if(req.params.id){
-            const del = await Codes.findByIdAndDelete(req.params.id);
+            const del = await Expense.findByIdAndDelete(req.params.id);
            res.send(del);
         }
     }
