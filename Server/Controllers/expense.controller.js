@@ -1,0 +1,46 @@
+const Expense=require("../Models/expense.model")
+
+const postExpense=async(req,res)=>{
+    const {id,desc,cat,date,amount,wallet}=req.body
+    if (!id || !cat || !amount) {
+        return res.status(422).json({ error: "Credentials must be filled" });
+      }
+    else{
+        try{
+            const data=await Expense.create(req.body);
+            return res.status(200).json({id:data._id,message:"Added"})
+         }
+         catch(e){
+            console.log(e);
+         }
+        }
+    }
+const showExpense=async(req,res)=>{
+    try{
+        const id=req.params.id
+        const expense=await Expense.find({id:req.params.id})
+        if (!expense) {
+            return res.status(404).json({ message: 'Expense not found' });
+        }
+        return res.json(expense); 
+    }
+    catch(e){
+        return res.json(e)
+    }
+}
+const delExpense=async(req,res)=>{
+    try{
+        if(req.params.id){
+            const del = await Codes.findByIdAndDelete(req.params.id);
+           res.send(del);
+        }
+    }
+    catch(e){
+        return res.json(e);
+    }
+}
+module.exports={
+    postExpense,
+    showExpense,
+    delExpense,
+}
