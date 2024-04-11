@@ -39,8 +39,18 @@ const delExpense=async(req,res)=>{
         return res.json(e);
     }
 }
+const UpdateExpense = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const update = await Expense.findByIdAndUpdate(id, req.body);
+      res.send(update);
+    } catch (e) {
+          res.json(e);
+    }
+  };
 module.exports={
     postExpense,
     showExpense,
     delExpense,
+    UpdateExpense
 }
