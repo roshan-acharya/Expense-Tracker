@@ -4,7 +4,7 @@
 #include <string.h>
 #include <curl/curl.h>
 #include <unistd.h>
-
+#include"Expense.h"
 #define ANSI_ORANGE "\x1b[38;5;208m"
 #define ANSI_RED     "\x1b[31m"
 #define ANSI_GREEN   "\x1b[32m"
@@ -25,6 +25,7 @@ int home();
 
 int main(){
     Screen();
+   
 }
 int Screen(){
     int ch;
@@ -87,10 +88,10 @@ struct Response {
     char message[256];
     long status_code;
     char id[200];
-};
+}response;
 // Callback function for bufferr
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
-    // Cast userdata to a pointer to struct Response
+    // Type casting  userdata to a pointer to struct Response
     struct Response *response = (struct Response *)userdata;
 
     // Parse the received JSON data
@@ -123,7 +124,7 @@ int login_connection(char username[50],char password[50]){
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data);
 
     // Structure to store response data
-    struct Response response;
+    
     response.message[0] = '\0';  // Initialize the message field
 
     // Set the userdata pointer to point to the struct Response
@@ -184,7 +185,7 @@ int login_connection(char username[50],char password[50]){
     return 0;
 }
 int signup_connection(char username[50],char password[50]){
-       CURL *curl;
+    CURL *curl;
     CURLcode res;
 
     //  libcurl initialization
@@ -281,6 +282,14 @@ int home(){
     printf("3. Update Expense \n");
     printf("4. Delete Expense \n"ANSI_RESET);
     printf(ANSI_RED"5. Exit \n"ANSI_RESET);
+    printf("Enter any key to continue......");
+    scanf("%d",&ch);
+    switch(ch){
+        case 1:
+        getData();
+        addExpense();
+        break;
+    }
 
     return 0;
     }
