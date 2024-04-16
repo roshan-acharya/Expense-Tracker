@@ -3,6 +3,6 @@
 
 // Function declaration
 int getData();
-int addExpense();
-
+int addExpense(char *id);
+int viewExpense(char *id);
 #endif

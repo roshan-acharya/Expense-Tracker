@@ -10,6 +10,7 @@
 #define ANSI_GREEN   "\x1b[32m"
 #define ANSI_RESET   "\x1b[0m"
 
+
 //function prototype
 
 int isUser();
@@ -95,7 +96,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     // Type casting  userdata to a pointer to struct Response
     struct Response *response = (struct Response *)userdata;
     // Parse the received JSON data
-    sscanf(ptr, "{\"id\":%s, \"message\": \"%255[^\"]\"}", response->id, response->message);
+   sscanf(ptr, "{\"id\":\"%[^}\"]\"", response->id);
     return size * nmemb;
 }
 int login_connection(char username[50],char password[50]){
@@ -209,7 +210,7 @@ int signup_connection(char username[50],char password[50]){
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data);
 
     // Structure to store response data
-    struct Response response;
+    
     response.message[0] = '\0';  // Initialize the message field
 
     // Set the userdata pointer to point to the struct Response
@@ -231,6 +232,7 @@ int signup_connection(char username[50],char password[50]){
         printf("Received Message: %s\n", response.message);
         printf("Status Code: %ld\n", response.status_code);
          printf("ID: %s\n", response.id);
+
         if(response.status_code==200){
             printf("\033[H\033[J"); 
             printf(ANSI_ORANGE"Signup Successfull" ANSI_RESET);
@@ -277,6 +279,8 @@ int signup_connection(char username[50],char password[50]){
 }
 int home(){
     int ch;
+    
+    printf("%s",response.id);
     printf(ANSI_GREEN"1. View Expense \n");
     printf("2. Add Expense \n");
     printf("3. Update Expense \n");
@@ -286,8 +290,11 @@ int home(){
     scanf("%d",&ch);
     switch(ch){
         case 1:
+        viewExpense(response.id);
+        break;
+        case 2:
         getData();
-        addExpense();
+        addExpense(response.id);
         break;
     }
 

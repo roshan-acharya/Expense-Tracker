@@ -21,7 +21,7 @@ const PostUsers = async (req, res) => {
       }
 
       const user = await User.create(req.body)
-      return res.status(200).json({id:user._id,message:"signup success"})
+      return res.status(200).json({id:user._id})
     }
   }
   catch (e) {
@@ -34,7 +34,7 @@ const CheckUsers=async(req,res)=>{
   const {username,password}=req.body;
   isUser=await User.findOne({username:username ,password:password})
   if(isUser){
-    return res.status(200).json({id:isUser._id,message:"Login Success"})
+    return res.status(200).json({id:isUser._id})
   }
   else{
     return res.status(206).json({message:"Invalid credentials"})
