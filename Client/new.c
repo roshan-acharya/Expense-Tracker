@@ -70,6 +70,7 @@ int login(){
     printf("Enter Your Password :");
     scanf("%s",password);
     login_connection(username,password);
+    
     return 0;    
 }
 int signup(){
@@ -93,10 +94,8 @@ struct Response {
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     // Type casting  userdata to a pointer to struct Response
     struct Response *response = (struct Response *)userdata;
-
     // Parse the received JSON data
     sscanf(ptr, "{\"id\":%s, \"message\": \"%255[^\"]\"}", response->id, response->message);
-
     return size * nmemb;
 }
 int login_connection(char username[50],char password[50]){
@@ -153,6 +152,7 @@ int login_connection(char username[50],char password[50]){
            
         }
         else if(response.status_code==206){
+            
             int ch;
             printf("\033[H\033[J"); 
             printf(ANSI_RED "\nInvalid Credentials\n\n"ANSI_RESET);

@@ -11,7 +11,13 @@ const ExpenseSchema=new mongoose.Schema({
     },
     date:{
         type: Date,
-        default: Date.now,
+        default: () => {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth(); 
+            const day = currentDate.getDate();
+            return new Date(year, month, day); 
+        }
     },
     amount:{
         type:Number,
