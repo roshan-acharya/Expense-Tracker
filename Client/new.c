@@ -296,6 +296,13 @@ int home(){
         getData();
         addExpense(response.id);
         break;
+        case 4:
+        printf("\033[H\033[J"); 
+        viewExpense(response.id);
+        printf("\n");
+        deleteExpense();
+        viewExpense(response.id);
+        break;
     }
 
     return 0;

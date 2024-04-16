@@ -2,7 +2,21 @@
 #include <stdio.h>
 #include <curl/curl.h>
 #include<string.h>
+#include <cJSON.h>
 #include<stdlib.h>
+#include <unistd.h>
+
+#define ANSI_ORANGE "\x1b[38;5;208m"
+#define ANSI_RED     "\x1b[31m"
+#define ANSI_GREEN   "\x1b[32m"
+#define ANSI_RESET   "\x1b[0m"
+
+#define MAX_ITEMS 20
+
+//function prototype
+int deleteExpense();
+
+int struct_n,count=1;
 struct Expense
 {
     char id[200];
@@ -13,14 +27,18 @@ struct Expense
     char dat[60];
 } send_data;
 
-//structure to store file data
-struct exp{
+struct Transaction{
     char id[200];
-    char descriptioon[50];
+    char desc[50];
     char cat[40];
-    int amt;
-    char wallet[40];
-};
+    char wallet[25];
+    int amount;
+}transactions[MAX_ITEMS];
+
+
+
+
+
 
 // get data function
 int getData()
@@ -99,12 +117,14 @@ int viewExpense(char *id){
         fprintf(stderr, "Error initializing curl.\n");
         return 1;
     }
+   char url[100];
+   strcpy(url, "http://localhost:3000/expense/get/");
+   strcat(url, id);
+    //url for get request
+    curl_easy_setopt(curl, CURLOPT_URL, url);
 
-    // Set the URL to retrieve data from
-    curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/expense/get/6617fe24687e8ff747c06714");
-
-    // Set the callback function to write data into a file
-    FILE *file = fopen("data.txt", "wb");
+    
+    FILE *file = fopen("data.json", "wb");
     if (!file) {
         fprintf(stderr, "Error opening file.\n");
         return 1;
@@ -122,8 +142,110 @@ int viewExpense(char *id){
     // Clean up libcurl
     curl_easy_cleanup(curl);
     fclose(file);
+    fileRead();
+}
+int fileRead(){
+    count=1;
+     FILE *file = fopen("data.json", "r");
+    if (!file) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    // Read JSON data from file
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char *json_data = (char *)malloc(fileSize + 1);
+    fread(json_data, 1, fileSize, file);
+    fclose(file);
+    json_data[fileSize] = '\0'; //terminate the string
+
+    // Parse JSON string
+    cJSON *root = cJSON_Parse(json_data);
+    if (!root) {
+        printf("Error parsing JSON.\n");
+        free(json_data);
+        return 1;
+    }
+    free(json_data);
+
+    // Check if root is an array
+    if (!cJSON_IsArray(root)) {
+        printf("JSON root is not an array.\n");
+        cJSON_Delete(root);
+        return 1;
+    }
+
+    struct_n= cJSON_GetArraySize(root);
+    
+
+    // Getting json
+    for (int i = 0; i < struct_n && i < MAX_ITEMS; i++) {
+        cJSON *transaction = cJSON_GetArrayItem(root, i);
+        cJSON *id = cJSON_GetObjectItem(transaction, "_id");
+        cJSON *desc = cJSON_GetObjectItem(transaction, "desc");
+        cJSON *cat = cJSON_GetObjectItem(transaction, "cat");
+        cJSON *wallet = cJSON_GetObjectItem(transaction, "wallet");
+        cJSON *amount = cJSON_GetObjectItem(transaction, "amount");
+//copy each json
+
+        if (id && desc && cat && amount) {
+            strcpy(transactions[i].id, id->valuestring);
+            strcpy(transactions[i].desc, desc->valuestring);
+            strcpy(transactions[i].cat, cat->valuestring);
+            transactions[i].amount = amount->valueint;
+            if (wallet)
+                strcpy(transactions[i].wallet, wallet->valuestring);
+            else
+                transactions[i].wallet[0] = '\0';
+
+          
+        }
+    }
+    printf("\033[H\033[J");
+    printf(ANSI_ORANGE"\033[1mYour Expenses on recent times : \n\n"ANSI_RESET);
+    printf(ANSI_GREEN"\033[1m%-10s %-25s %-10s %-20s %-10s\n", "S.N.", "Description", "Category", "Wallet", "Amount"ANSI_RESET);
+    for (int i = 0; i < struct_n && i < MAX_ITEMS; i++) {
+        printf("%-10d %-25s %-10s %-20s %-10d\n", count, transactions[i].desc, transactions[i].cat, transactions[i].wallet, transactions[i].amount);
+        count++;
+    }
+
+    // Cleanup cJSON
+    cJSON_Delete(root);
+
+    return 0;
 
 }
+int deleteExpense(){
+    int sn;
+    printf("Enter S.N for the expense to delete : ");
+    scanf("%d",&sn);
+    if(sn>count){
+        printf("Invalid Selection");
+    }
+    //handling delete request
+    CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
 
+    //url for delete request
+    long status_code;
+    char url[100];
+    strcpy(url, "http://localhost:3000/expense/del/");
+      curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+    
+    if(status_code==200){
+        printf(ANSI_RED"\n Deleted Successfull"ANSI_RESET);
+    }
 
+    // Cleanup libcurl
+    curl_easy_cleanup(curl);
+    sleep(3);
+    printf("\033[H\033[J"); 
+    return 0;
+}
 

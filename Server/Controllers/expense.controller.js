@@ -32,7 +32,7 @@ const delExpense=async(req,res)=>{
     try{
         if(req.params.id){
             const del = await Expense.findByIdAndDelete(req.params.id);
-           res.send(del);
+           return res.json(del).status(200);
         }
     }
     catch(e){

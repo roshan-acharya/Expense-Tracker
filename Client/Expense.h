@@ -5,4 +5,8 @@
 int getData();
 int addExpense(char *id);
 int viewExpense(char *id);
+int updateExpense();
+int deleteExpense();
+int fileRead();
+
 #endif
