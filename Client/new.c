@@ -279,22 +279,29 @@ int signup_connection(char username[50],char password[50]){
 }
 int home(){
     int ch;
-    
-    printf("%s",response.id);
     printf(ANSI_GREEN"1. View Expense \n");
     printf("2. Add Expense \n");
     printf("3. Update Expense \n");
     printf("4. Delete Expense \n"ANSI_RESET);
-    printf(ANSI_RED"5. Exit \n"ANSI_RESET);
+    printf(ANSI_RED"5. Log Out \n"ANSI_RESET);
     printf("Enter any key to continue......");
     scanf("%d",&ch);
     switch(ch){
         case 1:
         viewExpense(response.id);
+        home();
         break;
         case 2:
         getData();
         addExpense(response.id);
+        home();
+        break;
+        case 3:
+        printf("\033[H\033[J"); 
+        viewExpense(response.id);
+        updateExpense();
+        break;
+        
         break;
         case 4:
         printf("\033[H\033[J"); 
@@ -302,7 +309,11 @@ int home(){
         printf("\n");
         deleteExpense();
         viewExpense(response.id);
+        home();
         break;
+        default:{
+            exit(0);
+        }
     }
 
     return 0;

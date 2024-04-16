@@ -43,7 +43,7 @@ const UpdateExpense = async (req, res) => {
     try {
       const id = req.params.id;
       const update = await Expense.findByIdAndUpdate(id, req.body);
-      res.send(update);
+      return res.json(update).status(200);
     } catch (e) {
           res.json(e);
     }

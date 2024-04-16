@@ -15,6 +15,7 @@
 
 //function prototype
 int deleteExpense();
+int updateExpense();
 
 int struct_n,count=1;
 struct Expense
@@ -62,11 +63,10 @@ size_t write_callback1(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 int addExpense(char *id)
 {
-    printf("%s",id);
     int status_code;
     CURL *curl;
     CURLcode res;
-    char *url = "http://localhost:3000/expense/post"; // Replace with your API endpoint
+    char *url = "http://localhost:3000/expense/post";
 
     // Initialize libcurl
     curl = curl_easy_init();
@@ -248,4 +248,71 @@ int deleteExpense(){
     printf("\033[H\033[J"); 
     return 0;
 }
+int updateExpense(){
+    int sn;
+    char data[100];
+    printf("Enter S.N for the expense to delete : ");
+    scanf("%d",&sn);
 
+printf("\n Enter Category (%s) : ",transactions[sn-1].cat);
+      scanf("%s",data);;
+      if (strcmp(data, "\n") != 0) {
+        strcpy(transactions[sn-1].cat,data);
+      }
+
+    printf("\n Enter Description (%s) : ",transactions[sn-1].desc);
+    scanf("%s",data);
+      if (strcmp(data, "\n") != 0) {
+        strcpy(transactions[sn-1].desc,data);
+      }
+    printf("\n Enter Wallet used (%s) : ",transactions[sn-1].wallet);
+    scanf("%s",data);
+      if (strcmp(data, "\n") != 0) {
+        strcpy(transactions[sn-1].wallet,data);
+      }
+    int input;
+    char newline;
+    printf("\n Enter Amount expensed (%d) : ",transactions[sn-1].amount);
+    if (scanf("%d%c", &input, &newline) == 2 && newline == '\n') {
+        transactions[sn-1].amount = input;
+    } 
+
+      printf("desc : %s \n cat %s \n amount %d \n wallet %s\n",transactions[sn-1].desc,transactions[sn-1].cat,transactions[sn-1].amount,transactions[sn-1].wallet);
+      int status_code;
+    CURL *curl;
+    CURLcode res;
+    
+
+    // Initialize libcurl
+    curl = curl_easy_init();
+    if (curl)
+    {
+        // Set URL
+        char url[100];
+       strcpy(url, "http://localhost:3000/expense/update/");
+       strcat(url, transactions[sn-1].id);
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        // Format the data into JSON
+        char data[712]; // Adjust buffer size as needed
+        printf("%s",url);
+        snprintf(data, sizeof(data), "{\"desc\":\"%s\",\"cat\":\"%s\",\"amount\":%d,\"wallet\":\"%s\"}",
+                 transactions[sn-1].desc, transactions[sn-1].cat, transactions[sn-1].amount, transactions[sn-1].wallet);
+     printf("%s",data);
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+        res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        curl_easy_cleanup(curl);
+        return 1;
+    }
+
+    // Cleanup libcurl
+    curl_easy_cleanup(curl);
+
+      return 0;
+    }
+}
