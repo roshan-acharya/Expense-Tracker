@@ -13,4 +13,4 @@ The **Expense Tracker** is a Console application that help users manage and trac
 - **MongoDB**: Database to store and manage expense records.
 - **Express**: Web framework for Node.js to build the backend server.
 - **Node.js**: JavaScript runtime for building the backend.
-- 
+
